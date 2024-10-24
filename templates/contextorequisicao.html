@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Avaliação Contínua: Aula 04{% endblock %}
+
+{% block page_content %}
+<head>
+    <title>Contexto da Requisição</title>
+</head>
+<body>
+    <h1>Avaliação contínua: Aula 04</h1>
+    <h2><b>Seu navegador é:</b> {{user_agent}}</h2>
+    <h2><b>O IP do computador remoto é:</b> {{ip_remoto}}</h2>
+    <h2><b>O host da aplicação é:</b> {{host_aplicacao}}</h2>
+    <a href="/">Voltar</a>
+</body>
+{% endblock %}
