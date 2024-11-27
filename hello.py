@@ -3,7 +3,7 @@ from flask import Flask, render_template, session, redirect, url_for
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -44,8 +44,10 @@ class User(db.Model):
 
 class NameForm(FlaskForm):
     name = StringField('What is your name?', validators=[DataRequired()])
+    role = SelectField('Role?', choices=[('Administrator', 'Administrator'),
+                                         ('Moderator', 'Moderator'),
+                                         ('User', 'User')])
     submit = SubmitField('Submit')
-
 
 @app.shell_context_processor
 def make_shell_context():
@@ -66,15 +68,28 @@ def internal_server_error(e):
 def index():
     form = NameForm()
     if form.validate_on_submit():
+        role = Role.query.filter_by(name=form.role.data).first()
+        if not role:
+            role = Role(name=form.role.data)
+            db.session.add(role)
+            db.session.commit()
         user = User.query.filter_by(username=form.name.data).first()
-        if user is None:
-            user = User(username=form.name.data)
+        if not user:
+            user = User(username=form.name.data, role=role)
             db.session.add(user)
             db.session.commit()
             session['known'] = False
         else:
             session['known'] = True
         session['name'] = form.name.data
+        session['role'] = form.role.data
         return redirect(url_for('index'))
-    return render_template('index.html', form=form, name=session.get('name'),
-                           known=session.get('known', False))
+
+    users = User.query.all()
+    roles = Role.query.all()
+    return render_template('index.html',
+                           form=form,
+                           name=session.get('name'),
+                           known=session.get('known', False),
+                           users=users,
+                           roles=roles)
