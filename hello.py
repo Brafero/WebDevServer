@@ -68,7 +68,7 @@ def send_simple_message(to, subject, newUser):
                              auth=("api", app.config['API_KEY']), data={"from": app.config['API_FROM'],
                                                                         "to": to,
                                                                         "subject": app.config['FLASKY_MAIL_SUBJECT_PREFIX'] + ' ' + subject,
-                                                                        "text": "[PT302525X - Fernanda Barbalho] Novo usuário cadastrado: " + newUser})
+                                                                        "text": "Novo usuário cadastrado: " + newUser})
 
     print('Enviando mensagem (Resposta)...' + str(resposta) + ' - ' + datetime.now().strftime("%m/%d/%Y, %H:%M:%S"), flush=True)
     return resposta
